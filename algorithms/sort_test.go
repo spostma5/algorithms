@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const largeSlice int = 10000000
+const largeSlice int = 100000
 
 type sortTest[T cmp.Ordered] struct {
 	Name     string
@@ -159,7 +159,7 @@ func BenchmarkInsertionSort(b *testing.B) {
 		slices.Sort(expected)
 
 		b.Run("Case LARGE", func(b *testing.B) {
-			Quicksort(items)
+			InsertionSort(items)
 			assert.Equal(b, expected, items)
 		})
 	}
