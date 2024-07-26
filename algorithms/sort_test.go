@@ -2,10 +2,14 @@ package algorithms
 
 import (
 	"cmp"
+	"math/rand"
+	"slices"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+const largeSlice int = 10000000
 
 type sortTest[T cmp.Ordered] struct {
 	Name     string
@@ -83,10 +87,10 @@ var testElements = []sortTest[int]{
 
 func TestQuicksort(t *testing.T) {
 	for _, v := range testElements {
-		t.Run(v.Name, func(t *testing.T) {
-			toSort := make([]int, len(v.Vals))
-			copy(toSort, v.Vals)
+		toSort := make([]int, len(v.Vals))
+		copy(toSort, v.Vals)
 
+		t.Run(v.Name, func(t *testing.T) {
 			Quicksort(toSort)
 			assert.Equal(t, v.Expected, toSort)
 		})
@@ -95,10 +99,10 @@ func TestQuicksort(t *testing.T) {
 
 func TestInsertionSort(t *testing.T) {
 	for _, v := range testElements {
-		t.Run(v.Name, func(t *testing.T) {
-			toSort := make([]int, len(v.Vals))
-			copy(toSort, v.Vals)
+		toSort := make([]int, len(v.Vals))
+		copy(toSort, v.Vals)
 
+		t.Run(v.Name, func(t *testing.T) {
 			InsertionSort(toSort)
 			assert.Equal(t, v.Expected, toSort)
 		})
@@ -108,27 +112,55 @@ func TestInsertionSort(t *testing.T) {
 func BenchmarkQuicksort(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		for _, v := range testElements {
-			b.Run(v.Name, func(b *testing.B) {
-				toSort := make([]int, len(v.Vals))
-				copy(toSort, v.Vals)
+			toSort := make([]int, len(v.Vals))
+			copy(toSort, v.Vals)
 
+			b.Run(v.Name, func(b *testing.B) {
 				Quicksort(toSort)
 				assert.Equal(b, v.Expected, toSort)
 			})
 		}
+
+		items := make([]int, largeSlice)
+		for i := range items {
+			items[i] = rand.Intn(largeSlice)
+		}
+
+		expected := make([]int, largeSlice)
+		copy(expected, items)
+		slices.Sort(expected)
+
+		b.Run("Case LARGE", func(b *testing.B) {
+			Quicksort(items)
+			assert.Equal(b, expected, items)
+		})
 	}
 }
 
 func BenchmarkInsertionSort(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		for _, v := range testElements {
-			b.Run(v.Name, func(b *testing.B) {
-				toSort := make([]int, len(v.Vals))
-				copy(toSort, v.Vals)
+			toSort := make([]int, len(v.Vals))
+			copy(toSort, v.Vals)
 
+			b.Run(v.Name, func(b *testing.B) {
 				InsertionSort(toSort)
 				assert.Equal(b, v.Expected, toSort)
 			})
 		}
+
+		items := make([]int, largeSlice)
+		for i := range items {
+			items[i] = rand.Intn(largeSlice)
+		}
+
+		expected := make([]int, largeSlice)
+		copy(expected, items)
+		slices.Sort(expected)
+
+		b.Run("Case LARGE", func(b *testing.B) {
+			Quicksort(items)
+			assert.Equal(b, expected, items)
+		})
 	}
 }

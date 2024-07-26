@@ -5,10 +5,6 @@ import (
 )
 
 func InsertionSort[V cmp.Ordered](items []V) {
-	if len(items) <= 1 {
-		return
-	}
-
 	for j := 1; j < len(items); j++ {
 		for i := j - 1; i >= 0; i-- {
 			if items[i] > items[i+1] {
