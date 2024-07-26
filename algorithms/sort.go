@@ -2,24 +2,25 @@ package algorithms
 
 import (
 	"cmp"
-	"log/slog"
 )
 
 func Quicksort[V cmp.Ordered](items []V) {
-	slog.Info("Sorting with quicksort", "unsorted", items)
-
-	slog.SetLogLoggerLevel(slog.LevelDebug)
 	quicksort(items, 0, len(items)-1)
-
-	slog.Info("Sorting with quicksort", "sorted", items)
 }
 
 func quicksort[V cmp.Ordered](items []V, low, high int) {
-	if len(items) <= 1 || high-low <= 1 {
+	if high < low {
 		return
 	}
 
-	ind := (high - low) / 2 + low
+	if len(items) <= 1 || high-low <= 1 {
+		if items[low] > items[high] {
+			swap(items, low, high)
+		}
+		return
+	}
+
+	ind := (high-low)/2 + low
 	pivot := items[ind]
 
 	countLower := low
@@ -32,13 +33,17 @@ func quicksort[V cmp.Ordered](items []V, low, high int) {
 	swap(items, ind, countLower)
 	ind = countLower
 
-	for i, j := low, high; i < ind && j > ind; {
+	for i, j := low, high; i < j; {
 		for items[i] < pivot {
 			i++
 		}
 
-		for items[j] > pivot {
+		for items[j] >= pivot {
 			j--
+		}
+
+		if i >= j {
+			break
 		}
 
 		swap(items, i, j)
@@ -46,7 +51,7 @@ func quicksort[V cmp.Ordered](items []V, low, high int) {
 		j--
 	}
 
-	quicksort(items, low, ind)
+	quicksort(items, low, ind-1)
 	quicksort(items, ind+1, high)
 }
 
