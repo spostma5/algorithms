@@ -4,19 +4,28 @@ import (
 	"cmp"
 )
 
+func InsertionSort[V cmp.Ordered](items []V) {
+	if len(items) <= 1 {
+		return
+	}
+
+	for j := 1; j < len(items); j++ {
+		for i := j - 1; i >= 0; i-- {
+			if items[i] > items[i+1] {
+				swap(items, i, i+1)
+			} else {
+				break
+			}
+		}
+	}
+}
+
 func Quicksort[V cmp.Ordered](items []V) {
 	quicksort(items, 0, len(items)-1)
 }
 
 func quicksort[V cmp.Ordered](items []V, low, high int) {
 	if high < low {
-		return
-	}
-
-	if len(items) <= 1 || high-low <= 1 {
-		if items[low] > items[high] {
-			swap(items, low, high)
-		}
 		return
 	}
 
@@ -38,7 +47,7 @@ func quicksort[V cmp.Ordered](items []V, low, high int) {
 			i++
 		}
 
-		for items[j] >= pivot {
+		for j >= low && items[j] >= pivot {
 			j--
 		}
 
@@ -56,7 +65,5 @@ func quicksort[V cmp.Ordered](items []V, low, high int) {
 }
 
 func swap[V cmp.Ordered](items []V, a, b int) {
-	tmp := items[a]
-	items[a] = items[b]
-	items[b] = tmp
+	items[a], items[b] = items[b], items[a]
 }
