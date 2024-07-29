@@ -85,40 +85,44 @@ var testElements = []sortTest[int]{
 	},
 }
 
-func TestQuicksort(t *testing.T) {
+type SortTest struct {
+	sortFunc func([]int)
+}
+
+func (st *SortTest) Run(t *testing.T) {
 	for _, v := range testElements {
 		toSort := make([]int, len(v.Vals))
 		copy(toSort, v.Vals)
 
 		t.Run(v.Name, func(t *testing.T) {
-			QuickSort(toSort)
+			st.sortFunc(toSort)
 			assert.Equal(t, v.Expected, toSort)
 		})
 	}
+}
+
+func TestQuicksort(t *testing.T) {
+	st := SortTest{
+		sortFunc: QuickSort[int],
+	}
+
+	st.Run(t)
 }
 
 func TestInsertionSort(t *testing.T) {
-	for _, v := range testElements {
-		toSort := make([]int, len(v.Vals))
-		copy(toSort, v.Vals)
-
-		t.Run(v.Name, func(t *testing.T) {
-			InsertionSort(toSort)
-			assert.Equal(t, v.Expected, toSort)
-		})
+	st := SortTest{
+		sortFunc: InsertionSort[int],
 	}
+
+	st.Run(t)
 }
 
 func TestBubbleSort(t *testing.T) {
-	for _, v := range testElements {
-		toSort := make([]int, len(v.Vals))
-		copy(toSort, v.Vals)
-
-		t.Run(v.Name, func(t *testing.T) {
-			BubbleSort(toSort)
-			assert.Equal(t, v.Expected, toSort)
-		})
+	st := SortTest{
+		sortFunc: BubbleSort[int],
 	}
+
+	st.Run(t)
 }
 
 func BenchmarkQuicksort(b *testing.B) {
