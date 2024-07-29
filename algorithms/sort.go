@@ -16,7 +16,17 @@ func InsertionSort[V cmp.Ordered](items []V) {
 	}
 }
 
-func Quicksort[V cmp.Ordered](items []V) {
+func BubbleSort[V cmp.Ordered](items []V) {
+	for i := range items {
+		for j := 0; j < len(items)-i-1; j++ {
+			if items[j] > items[j+1] {
+				swap(items, j, j+1)
+			}
+		}
+	}
+}
+
+func QuickSort[V cmp.Ordered](items []V) {
 	quicksort(items, 0, len(items)-1)
 }
 
