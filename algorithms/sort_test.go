@@ -85,44 +85,32 @@ var testElements = []sortTest[int]{
 	},
 }
 
-type SortTest struct {
-	sortFunc func([]int)
-}
-
-func (st *SortTest) Run(t *testing.T) {
+func Run(t *testing.T, sort func([]int)) {
 	for _, v := range testElements {
 		toSort := make([]int, len(v.Vals))
 		copy(toSort, v.Vals)
 
 		t.Run(v.Name, func(t *testing.T) {
-			st.sortFunc(toSort)
+			sort(toSort)
 			assert.Equal(t, v.Expected, toSort)
 		})
 	}
 }
 
 func TestQuicksort(t *testing.T) {
-	st := SortTest{
-		sortFunc: QuickSort[int],
-	}
-
-	st.Run(t)
+	Run(t, QuickSort[int])
 }
 
 func TestInsertionSort(t *testing.T) {
-	st := SortTest{
-		sortFunc: InsertionSort[int],
-	}
-
-	st.Run(t)
+	Run(t, InsertionSort[int])
 }
 
 func TestBubbleSort(t *testing.T) {
-	st := SortTest{
-		sortFunc: BubbleSort[int],
-	}
+	Run(t, BubbleSort[int])
+}
 
-	st.Run(t)
+func TestMergeSort(t *testing.T) {
+	Run(t, MergeSort[int])
 }
 
 func BenchmarkQuicksort(b *testing.B) {
@@ -204,6 +192,34 @@ func BenchmarkBubbleSort(b *testing.B) {
 
 		b.Run("Case LARGE", func(b *testing.B) {
 			BubbleSort(items)
+			assert.Equal(b, expected, items)
+		})
+	}
+}
+
+func BenchmarkMergeSort(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		for _, v := range testElements {
+			toSort := make([]int, len(v.Vals))
+			copy(toSort, v.Vals)
+
+			b.Run(v.Name, func(b *testing.B) {
+				MergeSort(toSort)
+				assert.Equal(b, v.Expected, toSort)
+			})
+		}
+
+		items := make([]int, largeSlice)
+		for i := range items {
+			items[i] = rand.Intn(largeSlice)
+		}
+
+		expected := make([]int, largeSlice)
+		copy(expected, items)
+		slices.Sort(expected)
+
+		b.Run("Case LARGE", func(b *testing.B) {
+			MergeSort(items)
 			assert.Equal(b, expected, items)
 		})
 	}

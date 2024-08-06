@@ -30,6 +30,48 @@ func QuickSort[V cmp.Ordered](items []V) {
 	quicksort(items, 0, len(items)-1)
 }
 
+func MergeSort[V cmp.Ordered](items []V) {
+	mergesort(&items, 0, len(items)-1)
+}
+
+func mergesort[V cmp.Ordered](items *[]V, low, high int) {
+	if high <= low {
+		return
+	}
+
+	mid := (high - low) / 2
+
+	mergesort(items, low, low+mid)
+	mergesort(items, low+mid+1, high)
+
+	merge(items, low, mid, high)
+}
+
+func merge[V cmp.Ordered](items *[]V, low, mid, high int) {
+	sorted := make([]V, high-low+1)
+
+	for i, j, cnt := low, low+mid+1, 0; cnt <= high-low; cnt++ {
+		if i > low+mid {
+			sorted[cnt] = (*items)[j]
+			j++
+		} else if j > high {
+			sorted[cnt] = (*items)[i]
+			i++
+		} else if (*items)[i] < (*items)[j] {
+			sorted[cnt] = (*items)[i]
+			i++
+		} else {
+			sorted[cnt] = (*items)[j]
+			j++
+		}
+	}
+
+	//TODO: cleanup
+	for i := low; i <= high; i++ {
+		(*items)[i] = sorted[i-low]
+	}
+}
+
 func quicksort[V cmp.Ordered](items []V, low, high int) {
 	if high < low {
 		return
